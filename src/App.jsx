@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import lightMode from './assets/light-mode.png'
 import darkMode from './assets/dark-mode.png'
 import SavedPasswords from "./SavedPasswords"
@@ -12,6 +12,8 @@ function App() {
   let [toggle, setToggle] = useState(false) // False for light-mode
   let [savedPasswords, setSavedPasswords] = useState(false)
   let [message, setMessage] = useState('')
+
+  const passwordRef = useRef(null)
 
   // Caching the password during re-renders
   const passwordGenerator = useCallback(() => {
@@ -35,6 +37,7 @@ function App() {
   }, [length, numbers, specialChars, passwordGenerator])
 
   const handleCopy = () => {
+    passwordRef.current?.select()
     navigator.clipboard.writeText(password);
     const existingPasswords = JSON.parse(localStorage.getItem('passwords')) || [];
     existingPasswords.push(password);
@@ -67,6 +70,7 @@ function App() {
             readOnly
             value={password}
             className="flex-1 p-2 border border-gray-300 rounded-md bg-gray-200 text-gray-700 cursor-default"
+            ref={passwordRef}
           />
           <button
             onClick={handleCopy}
